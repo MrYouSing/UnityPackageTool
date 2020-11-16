@@ -25,7 +25,9 @@ namespace UnityPackageTool {
 
 		#region Fields
 
+		public int cacheSize;
 		public Dictionary<string,Entry> entries=new Dictionary<string,Entry>();
+		public System.Action<Entry> onEntryCompleted=null;
 
 		#endregion Fields
 
@@ -34,7 +36,7 @@ namespace UnityPackageTool {
 		public Package() {
 		}
 
-		public Package(string path) {
+		public virtual void Init(string path) {
 			string ext=Path.GetExtension(path);
 			switch(ext.ToLower()) {
 				case ".unitypackage":
@@ -72,7 +74,7 @@ namespace UnityPackageTool {
 			Entry e=GetEntry(Path.GetDirectoryName(te.Name));
 			if(e!=null) {
 				byte[] bytes;
-				using(MemoryStream ms=new MemoryStream()) {
+				using(MemoryStream ms=(cacheSize>0)?new MemoryStream(cacheSize):new MemoryStream()) {
 					ts.ReadNextFile(ms);
 					bytes=ms.ToArray();
 				}
@@ -91,6 +93,14 @@ namespace UnityPackageTool {
 					case "asset.meta":
 						e.meta=bytes;
 					break;
+				}
+				// TODO: Directories????
+				if(!string.IsNullOrEmpty(e.path)
+					&&e.asset!=null&&e.meta!=null
+				) {
+					if(onEntryCompleted!=null) {
+						onEntryCompleted(e);
+					}
 				}
 			}
 		}

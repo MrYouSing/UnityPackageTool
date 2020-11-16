@@ -7,11 +7,18 @@ namespace UnityPackageTool.Postprocessors {
 	{
 		#region Fields
 
-		public int maxSize=1024;
+		public int maxSize=-1;
 
 		#endregion Fields
 
 		#region Methods
+
+		public static void File_Move(string src,string dst) {
+			if(File.Exists(dst)) {
+				File.Delete(dst);
+			}
+			File.Move(src,dst);
+		}
 
 		public TexturePostprocessor(Importer importer):base(importer) {
 		}
@@ -34,9 +41,10 @@ namespace UnityPackageTool.Postprocessors {
 					File.Delete(tmp);
 					tmp=tmp+".meta";
 					if(File.Exists(tmp)) {
-						File.Move(tmp,path+".meta");
+						File_Move(tmp,path+".meta");
 					}
 				}
+				if(maxSize>=0) {
 				if(w>=h) {
 					if(w>maxSize) {
 						b|=0x2;
@@ -49,7 +57,7 @@ namespace UnityPackageTool.Postprocessors {
 						w=maxSize*h/w;
 						h=maxSize;
 					}
-				}
+				}}
 				//
 				if(b!=0x0) {
 					if((b&0x2)!=0) {
