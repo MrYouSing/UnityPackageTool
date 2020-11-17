@@ -7,7 +7,7 @@ namespace UnityPackageTool {
 		#region Fields
 
 		public string destination;
-		public List<Regex> regexps;
+		public System.Func<string,bool> filter=null;
 		public System.Action<string> onPostImport=null;
 
 		#endregion Fields
@@ -16,13 +16,8 @@ namespace UnityPackageTool {
 
 		public virtual bool CanImport(Package.Entry e) {
 			if(e==null||!e.enabled) {return false;}
-			int i=0,imax=regexps?.Count??0;
-			for(;i<imax;++i) {
-				if(regexps[i].IsMatch(e.path)) {
-					break;
-				}
-			}
-			return imax==0||i<imax;
+			if(filter!=null&&!filter(e.path)) {return false;}
+			return true;
 		}
 
 		public virtual string GetPath(string path) {
@@ -92,11 +87,15 @@ namespace UnityPackageTool {
 		}
 
 		public virtual void Import(string path) {
-			OnPostImport(path);
+			if(!Path.GetExtension(path).Equals(".meta",System.StringComparison.OrdinalIgnoreCase)) {
+				OnPostImport(path);
+			}
 			//
 			if(Directory.Exists(path)) {
 				foreach(string fn in Directory.GetFiles(path)) {
-					OnPostImport(fn);
+					if(!Path.GetExtension(fn).Equals(".meta",System.StringComparison.OrdinalIgnoreCase)) {
+						OnPostImport(fn);
+					}
 				}
 				foreach(string dn in Directory.GetDirectories(path)) {
 					Import(dn);
