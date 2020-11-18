@@ -45,5 +45,10 @@ namespace UnityPackageTool {
 
 			return totalRead;
 		}
+
+		public static void WriteAllBytes(string path,byte[] bytes,DateTime dateTime) {
+			File.WriteAllBytes(path,bytes);
+			File.SetLastWriteTime(path,dateTime);
+		}
 	}
 }

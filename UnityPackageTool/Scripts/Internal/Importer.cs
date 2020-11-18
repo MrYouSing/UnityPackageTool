@@ -43,10 +43,10 @@ namespace UnityPackageTool {
 			}
 			//
 			if(e.meta!=null) {
-				File.WriteAllBytes(fn+".meta",e.meta);
+				IOExtension.WriteAllBytes(fn+".meta",e.meta,e.metaTime);
 			}
 			if(e.isFile) {
-				File.WriteAllBytes(fn,e.asset);
+				IOExtension.WriteAllBytes(fn,e.asset,e.assetTime);
 			}
 			e.asset=null;
 			e.meta=null;
@@ -55,6 +55,9 @@ namespace UnityPackageTool {
 		}
 
 		public virtual void OnPostImport(string path) {
+			//
+			path=path.Replace('\\','/');
+			//
 			if(onPostImport!=null) {
 				onPostImport(path);
 			}

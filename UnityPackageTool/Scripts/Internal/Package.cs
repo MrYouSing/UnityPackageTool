@@ -17,6 +17,9 @@ namespace UnityPackageTool {
 			public bool enabled;
 			public string guid;
 
+			public System.DateTime assetTime;
+			public System.DateTime metaTime;
+
 			public virtual bool isFile=>asset!=null;
 			public virtual bool isDirectory=>asset==null;
 		}
@@ -89,9 +92,11 @@ namespace UnityPackageTool {
 					break;
 					case "asset":
 						e.asset=bytes;
+						e.assetTime=te.ModTime;
 					break;
 					case "asset.meta":
 						e.meta=bytes;
+						e.metaTime=te.ModTime;
 					break;
 				}
 				// TODO: Directories????

@@ -55,6 +55,7 @@
     <Compile Include="Scripts\Internal\Package.cs" />
     <Compile Include="Scripts\Internal\Importer.cs" />
     <Compile Include="Scripts\Internal\Postprocessor.cs" />
+    <Compile Include="Scripts\Postprocessors\AssetBundlePostprocessor.cs" />
     <Compile Include="Scripts\Postprocessors\TexturePostprocessor.cs" />
   </ItemGroup>
   <ItemGroup>
