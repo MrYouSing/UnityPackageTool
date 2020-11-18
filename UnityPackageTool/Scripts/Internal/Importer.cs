@@ -48,8 +48,7 @@ namespace UnityPackageTool {
 			if(e.isFile) {
 				IOExtension.WriteAllBytes(fn,e.asset,e.assetTime);
 			}
-			e.asset=null;
-			e.meta=null;
+			e.Clear();
 			//
 			OnPostImport(fn);
 		}
@@ -64,15 +63,23 @@ namespace UnityPackageTool {
 			System.Console.WriteLine("Import:"+path);
 		}
 
+		public virtual void TryImport(Package.Entry e) {
+			if(CanImport(e)) {
+				Import(e);
+			}else {
+				e?.Clear();
+			}
+		}
+
 		public virtual void Import(string src,string dst,ref Package package) {
 			if(!string.IsNullOrEmpty(dst)) {
 				destination=dst;
 			}
 			if(package==null) {package=new Package();}
 			//
-			package.onEntryCompleted+=Import;
+			package.onEntryCompleted+=TryImport;
 			package.Init(src);
-			package.onEntryCompleted-=Import;
+			package.onEntryCompleted-=TryImport;
 			// TODO: Directories????
 			Package.Entry e;
 			foreach(var it in package.entries) {

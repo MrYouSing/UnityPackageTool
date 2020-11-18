@@ -22,12 +22,18 @@ namespace UnityPackageTool {
 
 			public virtual bool isFile=>asset!=null;
 			public virtual bool isDirectory=>asset==null;
+
+			public virtual void Clear() {
+				asset=null;
+				meta=null;
+			}
 		}
 
 		#endregion Nested Types
 
 		#region Fields
 
+		public bool onlyList;
 		public int cacheSize;
 		public Dictionary<string,Entry> entries=new Dictionary<string,Entry>();
 		public System.Action<Entry> onEntryCompleted=null;
@@ -76,13 +82,32 @@ namespace UnityPackageTool {
 		public virtual void AddTarEntry(TarInputStream ts,TarEntry te) {
 			Entry e=GetEntry(Path.GetDirectoryName(te.Name));
 			if(e!=null) {
+				//
+				int usage=-1;
+				switch(Path.GetFileName(te.Name)) {
+					case "pathname":
+						usage=0;
+					break;
+					case "asset":
+						if(!onlyList) {
+							usage=1;
+						}
+					break;
+					case "asset.meta":
+						if(!onlyList) {
+							usage=2;
+						}
+					break;
+				}
+				if(usage<0) {return;}
+				//
 				byte[] bytes;
 				using(MemoryStream ms=(cacheSize>0)?new MemoryStream(cacheSize):new MemoryStream()) {
 					ts.ReadNextFile(ms);
 					bytes=ms.ToArray();
 				}
-				switch(Path.GetFileName(te.Name)) {
-					case "pathname":
+				switch(usage) {
+					case 0:
 						e.path=Encoding.ASCII.GetString(bytes);
 						//
 						int n=e.path.IndexOf('\r');
@@ -90,11 +115,11 @@ namespace UnityPackageTool {
 							e.path=e.path.Substring(0,n);
 						}
 					break;
-					case "asset":
+					case 1:
 						e.asset=bytes;
 						e.assetTime=te.ModTime;
 					break;
-					case "asset.meta":
+					case 2:
 						e.meta=bytes;
 						e.metaTime=te.ModTime;
 					break;
@@ -108,6 +133,24 @@ namespace UnityPackageTool {
 					}
 				}
 			}
+		}
+
+		public virtual List<string> ToList(List<string> list=null) {
+			int n=entries.Count;
+			if(list==null) {list=new List<string>(n);}
+			int i=list.Count;n=0;
+			//
+			Entry e;
+			foreach(var it in entries) {
+				e=it.Value;
+				if(e!=null&&!string.IsNullOrEmpty(e.path)) {
+					list.Add(e.path);
+					++n;
+				}
+			}
+			//
+			list.Sort(string.CompareOrdinal);//i,n????
+			return list;
 		}
 
 		#endregion Methods

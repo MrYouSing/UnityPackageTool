@@ -29,7 +29,7 @@ namespace UnityPackageTool.Postprocessors {
 			switch(fif) {
 				case FREE_IMAGE_FORMAT.FIF_JPEG:
 				case FREE_IMAGE_FORMAT.FIF_PNG:
-				case FREE_IMAGE_FORMAT.FIF_TIFF:
+				//case FREE_IMAGE_FORMAT.FIF_TIFF:
 				return false;
 				default:
 					fif=FREE_IMAGE_FORMAT.FIF_PNG;
