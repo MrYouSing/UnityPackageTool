@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
+using static UnityPackageTool.IOExtension;
 
 namespace UnityPackageTool {
 	public class Importer {
@@ -43,10 +43,10 @@ namespace UnityPackageTool {
 			}
 			//
 			if(e.meta!=null) {
-				IOExtension.WriteAllBytes(fn+".meta",e.meta,e.metaTime);
+				File_WriteAllBytes(fn+".meta",e.meta,e.metaTime);
 			}
 			if(e.isFile) {
-				IOExtension.WriteAllBytes(fn,e.asset,e.assetTime);
+				File_WriteAllBytes(fn,e.asset,e.assetTime);
 			}
 			e.Clear();
 			//

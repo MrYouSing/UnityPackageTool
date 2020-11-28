@@ -46,9 +46,24 @@ namespace UnityPackageTool {
 			return totalRead;
 		}
 
-		public static void WriteAllBytes(string path,byte[] bytes,DateTime dateTime) {
+		public static void File_WriteAllBytes(string path,byte[] bytes,DateTime dateTime) {
 			File.WriteAllBytes(path,bytes);
 			File.SetLastWriteTime(path,dateTime);
+		}
+
+		public static void File_Move(string src,string dst) {
+			if(File.Exists(dst)) {
+				File.Delete(dst);
+			}
+			File.Move(src,dst);
+		}
+
+		public static void File_ChangeExtension(string src,string dst) {
+			File.Delete(src);
+			src=src+".meta";
+			if(File.Exists(src)) {
+				File_Move(src,dst+".meta");
+			}
 		}
 	}
 }

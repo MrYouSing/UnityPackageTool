@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using FreeImageAPI;
+using static UnityPackageTool.IOExtension;
 
 namespace UnityPackageTool.Postprocessors {
 	public class TexturePostprocessor
@@ -13,13 +14,6 @@ namespace UnityPackageTool.Postprocessors {
 		#endregion Fields
 
 		#region Methods
-
-		public static void File_Move(string src,string dst) {
-			if(File.Exists(dst)) {
-				File.Delete(dst);
-			}
-			File.Move(src,dst);
-		}
 
 		public TexturePostprocessor(Importer importer):base(importer) {
 		}
@@ -53,11 +47,7 @@ namespace UnityPackageTool.Postprocessors {
 					string tmp=path;
 					path=Path.ChangeExtension(path,"."+FreeImage.GetFIFExtensionList(fif).Split(',')[0]);
 					//
-					File.Delete(tmp);
-					tmp=tmp+".meta";
-					if(File.Exists(tmp)) {
-						File_Move(tmp,path+".meta");
-					}
+					File_ChangeExtension(tmp,path);
 				}
 				if(maxSize>=0) {
 				if(w>=h) {
