@@ -25,6 +25,10 @@ namespace UnityPackageTool.Postprocessors {
 				case FREE_IMAGE_FORMAT.FIF_PNG:
 				//case FREE_IMAGE_FORMAT.FIF_TIFF:
 				return false;
+				// Skyboxes and lightmaps,and so on.
+				case FREE_IMAGE_FORMAT.FIF_EXR:
+				case FREE_IMAGE_FORMAT.FIF_HDR:
+				return false;
 				default:
 					fif=FREE_IMAGE_FORMAT.FIF_PNG;
 				return true;

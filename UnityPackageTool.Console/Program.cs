@@ -25,6 +25,8 @@ namespace UnityPackageTool.Console
 			if(arg=="/q") {
 				return false;
 			}else if(arg=="/h") {
+			}else if(arg.EndsWith(".unitypackage")) {
+				new Importer().Import(arg,Path.ChangeExtension(arg,null));
 			}else {
 				System.DateTime dt=System.DateTime.Now;
 				string ext=Path.GetExtension(arg).ToLower();
@@ -34,7 +36,9 @@ namespace UnityPackageTool.Console
 						try {
 							env.DoChunk(File.ReadAllText(arg),"test.lua");
 						}catch(System.Exception ex) {
-							System.Console.WriteLine(ex.ToString());
+							if(ex!=null) {
+								System.Console.WriteLine(ex.ToString());
+							}
 						}
 					}
 				} else if(ext==".js"||ext==".ts") {

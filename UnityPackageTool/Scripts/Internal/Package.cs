@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
+using Newtonsoft.Json;
 
 namespace UnityPackageTool {
 	public partial class Package {
@@ -151,6 +152,32 @@ namespace UnityPackageTool {
 			//
 			list.Sort(string.CompareOrdinal);//i,n????
 			return list;
+		}
+
+		public virtual IDictionary<string,string> ToDictionary(IDictionary<string,string> dict=null) {
+			int n=entries.Count;
+			if(dict==null) {dict=new Dictionary<string,string>(n);}
+			int i=dict.Count;n=0;
+			//
+			Entry e;
+			foreach(var it in entries) {
+				e=it.Value;
+				if(e!=null&&!string.IsNullOrEmpty(e.path)) {
+					dict[e.path]=e.guid;
+					++n;
+				}
+			}
+			//
+			return dict;
+		}
+
+		public virtual string ToJson(int type,bool isIndented=false) {
+			Formatting formatting=isIndented?Formatting.Indented:Formatting.None;
+			switch(type) {
+				case 0:return JsonConvert.SerializeObject(ToList(),formatting);
+				case 1:return JsonConvert.SerializeObject(ToDictionary(),formatting);
+			}
+			return string.Empty;
 		}
 
 		#endregion Methods

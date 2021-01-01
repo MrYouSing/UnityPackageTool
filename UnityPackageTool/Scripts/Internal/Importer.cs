@@ -85,7 +85,7 @@ namespace UnityPackageTool {
 			foreach(var it in package.entries) {
 				e=it.Value;
 				if(CanImport(e)) {
-				if(e.meta!=null) {
+				if(e.isDirectory&&e.meta!=null) {
 					Import(e);
 				}}
 			}
