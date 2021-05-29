@@ -65,5 +65,9 @@ namespace UnityPackageTool {
 				File_Move(src,dst+".meta");
 			}
 		}
+
+		public static bool IsMetaFile(this string thiz) {
+			return thiz.EndsWith(".meta",System.StringComparison.OrdinalIgnoreCase);
+		}
 	}
 }

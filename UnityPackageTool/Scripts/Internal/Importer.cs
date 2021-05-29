@@ -97,13 +97,11 @@ namespace UnityPackageTool {
 		}
 
 		public virtual void Import(string path) {
-			if(!Path.GetExtension(path).Equals(".meta",System.StringComparison.OrdinalIgnoreCase)) {
+			if(File.Exists(path)&&!path.IsMetaFile()) {
 				OnPostImport(path);
-			}
-			//
-			if(Directory.Exists(path)) {
+			}else if(Directory.Exists(path)) {
 				foreach(string fn in Directory.GetFiles(path)) {
-					if(!Path.GetExtension(fn).Equals(".meta",System.StringComparison.OrdinalIgnoreCase)) {
+					if(!path.IsMetaFile()) {
 						OnPostImport(fn);
 					}
 				}

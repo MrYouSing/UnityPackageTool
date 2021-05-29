@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Neo.IronLua;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace UnityPackageTool.Console
 {
@@ -25,6 +26,13 @@ namespace UnityPackageTool.Console
 			if(arg=="/q") {
 				return false;
 			}else if(arg=="/h") {
+			}else if(arg.StartsWith("zip ",System.StringComparison.OrdinalIgnoreCase)&&arg.EndsWith(".unitypackage")) {
+				arg=arg.Substring("zip ".Length);
+				string dir=Path.ChangeExtension(arg,null)+"_UPT";
+				new Importer().Import(arg,dir);
+				FastZip zip=new FastZip();
+				zip.CreateZip(Path.ChangeExtension(arg,".zip"),dir+"/Assets/",true,"");
+				Directory.Delete(dir,true);
 			}else if(arg.EndsWith(".unitypackage")) {
 				new Importer().Import(arg,Path.ChangeExtension(arg,null));
 			}else {

@@ -48,10 +48,6 @@ namespace UnityPackageTool.Postprocessors {
 				//
 				if(CanConvert(ref fif)) {
 					b|=0x1;
-					string tmp=path;
-					path=Path.ChangeExtension(path,"."+FreeImage.GetFIFExtensionList(fif).Split(',')[0]);
-					//
-					File_ChangeExtension(tmp,path);
 				}
 				if(maxSize>=0) {
 				if(w>=h) {
@@ -73,7 +69,33 @@ namespace UnityPackageTool.Postprocessors {
 						var tmp=FreeImage.Rescale(dib,w,h,FREE_IMAGE_FILTER.FILTER_BILINEAR);
 						FreeImage.UnloadEx(ref dib);dib=tmp;
 					}
-					FreeImage.SaveEx(dib,path,fif);
+					//
+					if(true) {
+						string tmp=path;
+						path=Path.ChangeExtension(path,"."+FreeImage.GetFIFExtensionList(fif).Split(',')[0]);
+						bool ext=!path.Equals(tmp,System.StringComparison.OrdinalIgnoreCase);
+						byte[] raw=File.ReadAllBytes(tmp);
+						//
+						int i=10;while(i-->0) {
+							FreeImage.SaveEx(dib,path,fif);
+							if(new FileInfo(path).Length>0) {
+								if(ext) {
+									File_ChangeExtension(tmp,path);
+								}
+								break;
+							}
+						}
+						// Revert
+						if(i<0) {
+							if(ext) {
+								File.Delete(path);
+							}else {
+								File.WriteAllBytes(tmp,raw);
+							}
+						}else if(i<9) {
+							System.Console.WriteLine("Fix a file.");
+						}
+					}
 				}
 				//
 				FreeImage.UnloadEx(ref dib);
