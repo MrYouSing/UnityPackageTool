@@ -75,25 +75,35 @@ namespace UnityPackageTool.Postprocessors {
 						path=Path.ChangeExtension(path,"."+FreeImage.GetFIFExtensionList(fif).Split(',')[0]);
 						bool ext=!path.Equals(tmp,System.StringComparison.OrdinalIgnoreCase);
 						byte[] raw=File.ReadAllBytes(tmp);
+						System.DateTime date=File.GetLastWriteTime(tmp);
 						//
 						int i=10;while(i-->0) {
-							FreeImage.SaveEx(dib,path,fif);
-							if(new FileInfo(path).Length>0) {
+							if(FreeImage.SaveEx(dib,path,fif)
+								&&File.Exists(path)&&new FileInfo(path).Length>0
+							) {
 								if(ext) {
 									File_ChangeExtension(tmp,path);
 								}
 								break;
+							}else {
+								System.GC.Collect();
+								System.Threading.Thread.Sleep(100);
 							}
 						}
 						// Revert
 						if(i<0) {
-							if(ext) {
+							if(false) {
+							}else if(ext) {
 								File.Delete(path);
 							}else {
-								File.WriteAllBytes(tmp,raw);
+								File.WriteAllBytes(tmp,raw);path=tmp;
 							}
 						}else if(i<9) {
 							System.Console.WriteLine("Fix a file.");
+						}
+						// Flush
+						if(File.Exists(path)) {
+							File.SetLastWriteTime(path,date);
 						}
 					}
 				}
